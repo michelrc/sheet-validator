@@ -11,5 +11,5 @@ vendor
 *.iws
 .idea/
 #Netbeans
-.nbproject
+/nbproject
 
