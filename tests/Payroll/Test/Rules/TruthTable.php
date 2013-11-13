@@ -14,7 +14,7 @@ class TruthTable implements RuleRepository
      *
      * @return array
      */
-    public function getContextVariables()
+    public function getContextVariableNames()
     {
         return array('A2', 'B2', 'A3', 'B3', 'A4', 'B4', 'A5', 'B5');
     }

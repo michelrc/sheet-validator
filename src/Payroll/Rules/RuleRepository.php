@@ -20,5 +20,5 @@ interface RuleRepository
      *
      * @return array
      */
-    public function getContextVariables();
+    public function getContextVariableNames();
 }
