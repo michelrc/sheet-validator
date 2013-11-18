@@ -9,6 +9,7 @@
 namespace Payroll\Test;
 
 use \Payroll\PayrollValidator;
+use \Ruler\RuleBuilder;
 
 
 class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
@@ -54,7 +55,35 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
             in_array('Payroll\Rules\RuleRepository', array_keys($interfaces)));
     }
 
-    public function tablePath() {
+    /**
+     * @dataProvider tablePath
+     */
+    public function testPayrollValidatorRulesExecution($path_excel_file, $repositories)
+    {
+
+        $prv = new PayrollValidator($path_excel_file, $repositories);
+
+        $repositories = $prv->getRepositories();
+
+        $builder = new RuleBuilder();
+
+        /*
+         * Each repository represents a sheet on an excel document, execute all rules
+         * for each of them.
+         */
+        foreach ($repositories as $r) {
+            $r->setBuilder($builder);
+
+            $this->assertEquals($r->getName(), "TruthTable");
+            $this->assertNotNull($r->getBuilder());
+            $this->assertEquals($builder, $r->getBuilder());
+        }
+
+        //TODO lets evaluate some rules with a concrete context
+    }
+
+    public function tablePath()
+    {
         return array(
             array('./tests/Payroll/repository/truth-table.xlsx',
                 array('./tests/Payroll/Test/Rules/TruthTable.php')),

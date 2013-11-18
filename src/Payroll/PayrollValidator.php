@@ -75,6 +75,7 @@ class PayrollValidator {
     }
 
     /**
+     * Return the repositories loaded
      * @return array RuleRepository
      */
     public function getRepositories() {
