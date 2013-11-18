@@ -19,7 +19,8 @@
         "php": ">=5.3.0",
         "pimple/pimple": "1.0.*",
         "ruler/ruler": "*",
-        "phpoffice/phpexcel": "*"
+        "phpoffice/phpexcel": "*",
+        "psr/log": "1.0.*"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
