@@ -35,10 +35,4 @@ interface RuleRepository
      */
     public function getRules();
 
-    /**
-     * Return an array with context variables names used on the rules added
-     *
-     * @return array
-     */
-    public function getContextVariables();
 }

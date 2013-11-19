@@ -76,17 +76,6 @@ class TruthTable implements RuleRepository
         return $this->logger;
     }
 
-
-    /**
-     * Context variables names used on the rules declared here.
-     *
-     * @return array
-     */
-    public function getContextVariables()
-    {
-        return array('A2', 'B2', 'A3', 'B3', 'A4', 'B4', 'A5', 'B5');
-    }
-
     /**
      * Uses the builder to create the rules. Callable on rules will use the logger
      * interface to report issues.
