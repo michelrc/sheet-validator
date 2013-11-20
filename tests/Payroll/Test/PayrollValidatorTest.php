@@ -54,6 +54,25 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue(
             in_array('Payroll\Rules\RuleRepository', array_keys($interfaces)));
     }
+    
+    /**
+     * @dataProvider tablePath
+     */
+     public function testgetContextVariables($path_excel_file, $repositories) {
+        $prv = new PayrollValidator($path_excel_file, $repositories);
+        
+        $sheet_names = $prv->getExcelFile()->getSheetNames();
+        $context = $prv->getContext();
+
+        // really got the repositories?
+        $this->assertNotEmpty($context);
+        //$this->fail(print_r($context, true));
+        foreach($sheet_names as $sheet_name) {
+           $this->assertArrayHasKey($sheet_name,$context);    
+        }
+        
+    
+    }
 
     /**
      * @dataProvider tablePath

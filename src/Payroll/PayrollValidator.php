@@ -23,8 +23,8 @@ class PayrollValidator {
     /**
      * @var string Document Path
      */
-
     private $path_excel_file;
+
     /**
      * @var \PHPExcel Document instance on memory
      */
@@ -46,13 +46,13 @@ class PayrollValidator {
         try {
             $this->excel_file = \PHPExcel_IOFactory::load($this->path_excel_file);
         } catch (Exception $e) {
-            die('Error loading file');
+            throw new \Exception("Invalid path for file", $e);
         }
 
-        foreach($rule_repositories as $file) {
+        foreach ($rule_repositories as $file) {
 
             $path = realpath($file);
-            if(is_file($path)){
+            if (is_file($path)) {
 
                 // lets plug the rules
                 require_once($path);
@@ -60,9 +60,9 @@ class PayrollValidator {
                 $class = explode('.', basename($path));
                 $class = $class[0];
                 // instantiate the class
-                $this ->repositories[] = new $class();
-
-            } else throw new \Exception("Invalid path for rules. [" . $path. "]");
+                $this->repositories[] = new $class();
+            } else
+                throw new \Exception("Invalid path for rules. [" . $path . "]");
         }
     }
 
@@ -75,11 +75,33 @@ class PayrollValidator {
     }
 
     /**
-     * Return the repositories loaded
-     * @return array RuleRepository
+     * @return RuleRepository
      */
     public function getRepositories() {
         return $this->repositories;
+    }
+
+    public function buildRules($rb) {
+
+    }
+
+    /**
+     * Return an array with context variables names used on the rules added
+     *
+     * @return array
+     */
+    public function getContext() {
+        $all_sheets = $this->getExcelFile()->getAllSheets();
+        $sheet_names = $this->getExcelFile()->getSheetNames();
+
+        $context = array();
+
+        for ($i = 0; $i < count($sheet_names); $i++) {
+            $var_sheet = $all_sheets[$i]->getCellCollection();
+            $context[$sheet_names[$i]] = $var_sheet;
+        }
+
+        return $context;
     }
 
 }
