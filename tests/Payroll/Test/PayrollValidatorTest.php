@@ -9,6 +9,7 @@
 namespace Payroll\Test;
 
 use \Payroll\PayrollValidator;
+use Payroll\Test\Log\DummyLogger;
 use \Ruler\RuleBuilder;
 
 
@@ -17,8 +18,10 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider tablePath
      */
-    public function testPayrollValidator($path_excel_file, $repositories) {
-        $rb = new \Payroll\PayrollValidator($path_excel_file, $repositories);
+    public function testPayrollValidator(
+        $path_excel_file, $repositories, $logger) {
+
+        $rb = new PayrollValidator($path_excel_file, $repositories, $logger);
         $excel_file = $rb->getExcelFile();
 
         $sheet = $excel_file->getSheet(0);
@@ -36,9 +39,10 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
     /**
      * @dataProvider tablePath
      */
-    public function testPayrollValidatorPluggableRules($path_excel_file, $repositories){
+    public function testPayrollValidatorPluggableRules(
+        $path_excel_file, $repositories, $logger){
 
-        $prv = new PayrollValidator($path_excel_file, $repositories);
+        $prv = new PayrollValidator($path_excel_file, $repositories, $logger);
 
         $repositories = $prv->getRepositories();
 
@@ -54,13 +58,14 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue(
             in_array('Payroll\Rules\RuleRepository', array_keys($interfaces)));
     }
-    
+
     /**
      * @dataProvider tablePath
      */
-     public function testgetContextVariables($path_excel_file, $repositories) {
-        $prv = new PayrollValidator($path_excel_file, $repositories);
-        
+     public function testGetContextVariables(
+         $path_excel_file, $repositories, $logger) {
+        $prv = new PayrollValidator($path_excel_file, $repositories, $logger);
+
         $sheet_names = $prv->getExcelFile()->getSheetNames();
         $context = $prv->getContext();
 
@@ -68,19 +73,20 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($context);
         //$this->fail(print_r($context, true));
         foreach($sheet_names as $sheet_name) {
-           $this->assertArrayHasKey($sheet_name,$context);    
+           $this->assertArrayHasKey($sheet_name,$context);
         }
-        
-    
+
+
     }
 
     /**
      * @dataProvider tablePath
      */
-    public function testPayrollValidatorRulesExecution($path_excel_file, $repositories)
+    public function testPayrollValidatorRulesExecution(
+        $path_excel_file, $repositories, $logger)
     {
 
-        $prv = new PayrollValidator($path_excel_file, $repositories);
+        $prv = new PayrollValidator($path_excel_file, $repositories, $logger);
 
         $repositories = $prv->getRepositories();
 
@@ -105,9 +111,11 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
     {
         return array(
             array('./tests/Payroll/repository/truth-table.xlsx',
-                array('./tests/Payroll/Test/Rules/TruthTable.php')),
+                array('./tests/Payroll/Test/Rules/TruthTable.php'),
+                new DummyLogger()),
             array('./tests/Payroll/repository/truth-table.ods',
-                array('./tests/Payroll/Test/Rules/TruthTable.php'))
+                array('./tests/Payroll/Test/Rules/TruthTable.php'),
+                new DummyLogger())
         );
     }
 

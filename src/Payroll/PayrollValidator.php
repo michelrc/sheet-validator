@@ -36,12 +36,19 @@ class PayrollValidator {
     private $repositories = array();
 
     /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger = null;
+
+    /**
      * Constructor
      * @param string $path_excel_file Document path
      * @param array $rule_repositories Array of file paths containing rules
+     * @param $logger \Psr\Log\LoggerInterface
      * @throws \Exception
      */
-    public function __construct($path_excel_file, array $rule_repositories) {
+    public function __construct($path_excel_file, array $rule_repositories, $logger) {
+        $this->logger = $logger;
         $this->path_excel_file = $path_excel_file;
         try {
             $this->excel_file = \PHPExcel_IOFactory::load($this->path_excel_file);
@@ -83,6 +90,22 @@ class PayrollValidator {
 
     public function buildRules($rb) {
 
+    }
+
+    /**
+     * @param \Psr\Log\LoggerInterface $logger
+     */
+    public function setLogger($logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @return \Psr\Log\LoggerInterface
+     */
+    public function getLogger()
+    {
+        return $this->logger;
     }
 
     /**
