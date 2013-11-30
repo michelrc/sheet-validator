@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "9c4d034314abe4a8bd85d6a91ae08394",
+    "hash": "cbc4f942580b5f5e0807f2bfbd7b9d95",
     "packages": [
         {
             "name": "phpoffice/phpexcel",
@@ -109,19 +109,24 @@
         },
         {
             "name": "psr/log",
-            "version": "1.0.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b"
+                "reference": "134145e8d08ddcb9bb8f49a2feb9aa1f2393650c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/fe0936ee26643249e916849d48e3a51d5f5e278b",
-                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/134145e8d08ddcb9bb8f49a2feb9aa1f2393650c",
+                "reference": "134145e8d08ddcb9bb8f49a2feb9aa1f2393650c",
                 "shasum": ""
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "Psr\\Log\\": ""
@@ -143,20 +148,20 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2012-12-21 11:40:51"
+            "time": "2013-11-19 10:21:35"
         },
         {
             "name": "ruler/ruler",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/bobthecow/Ruler.git",
-                "reference": "68096681f45fa61b5bca67d4ecb28447cedc5a63"
+                "url": "https://github.com/ludicruz/Ruler.git",
+                "reference": "54103ba179986b9cb3ae12c686ccd79dc426ac19"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/Ruler/zipball/68096681f45fa61b5bca67d4ecb28447cedc5a63",
-                "reference": "68096681f45fa61b5bca67d4ecb28447cedc5a63",
+                "url": "https://api.github.com/repos/ludicruz/Ruler/zipball/54103ba179986b9cb3ae12c686ccd79dc426ac19",
+                "reference": "54103ba179986b9cb3ae12c686ccd79dc426ac19",
                 "shasum": ""
             },
             "require": {
@@ -173,7 +178,6 @@
                     "Ruler\\Test": "tests"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -190,7 +194,10 @@
                 "engine",
                 "rules"
             ],
-            "time": "2013-09-19 06:52:41"
+            "support": {
+                "source": "https://github.com/ludicruz/Ruler/tree/master"
+            },
+            "time": "2013-11-13 18:14:37"
         }
     ],
     "packages-dev": [
@@ -577,12 +584,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "1f7cabb841e62ec49615bd965ac780fd994b3f64"
+                "reference": "9de619fff37677c6a4d71aba0fc8ede5c5186c9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/1f7cabb841e62ec49615bd965ac780fd994b3f64",
-                "reference": "1f7cabb841e62ec49615bd965ac780fd994b3f64",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/9de619fff37677c6a4d71aba0fc8ede5c5186c9a",
+                "reference": "9de619fff37677c6a4d71aba0fc8ede5c5186c9a",
                 "shasum": ""
             },
             "require": {
@@ -591,7 +598,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4-dev"
+                    "dev-master": "2.5-dev"
                 }
             },
             "autoload": {
@@ -615,7 +622,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2013-10-17 11:48:11"
+            "time": "2013-11-24 20:17:07"
         }
     ],
     "aliases": [

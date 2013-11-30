@@ -22,6 +22,12 @@
         "phpoffice/phpexcel": "*",
         "psr/log": "1.0.*"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/ludicruz/Ruler.git"
+        }
+    ],
     "require-dev": {
         "phpunit/phpunit": "*"
     },
