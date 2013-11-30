@@ -48,7 +48,7 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
 
         // really got the repositories?
         $this->assertNotEmpty($repositories);
-        $this->assertCount(1, $repositories);
+        $this->assertCount(2, $repositories);
 
         // instance implement proper interface
         $r = New \ReflectionClass(get_class($repositories[0]));
@@ -96,27 +96,89 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
          * Each repository represents a sheet on an excel document, execute all rules
          * for each of them.
          */
-        foreach ($repositories as $r) {
+        foreach ($repositories as $k => $r) {
             $r->setBuilder($builder);
+            $r->setLogger($logger);
 
-            $this->assertEquals($r->getName(), "TruthTable");
+            $this->assertTrue($r->getName() == "TruthTable" || $r->getName() == "TruthTableGenerated");
             $this->assertNotNull($r->getBuilder());
             $this->assertEquals($builder, $r->getBuilder());
-        }
 
-        //TODO lets evaluate some rules with a concrete context
+            // testing rules individually
+            $rules = $r->getRules();
+            $this->assertCount(10, $rules);
+
+            $this->assertEquals($context['TruthTable']['A1'], "P");
+            $this->assertFalse($rules["A1=P"]->evaluate($context));
+
+            $this->assertEquals(
+                $context['TruthTable']['A2values'], array('0', '1'));
+            $this->assertFalse($rules["A2valuesContain"]->evaluate($context));
+
+            // test expected values
+            $this->assertEquals(
+                $context['TruthTable']['B4'], "d");
+            $this->assertEquals(
+                $context['TruthTableGenerated']['B4'], "d");
+
+            $this->assertEquals(
+                $context['TruthTable']['B4values'], array('0', '1'));
+            $this->assertEquals(
+                $context['TruthTableGenerated']['B4values'], array('0', '1'));
+
+            // B4 is a letter, allowed values are 0|1, the next should fail
+            $this->assertTrue($rules["B4valuesContain"]->evaluate($context));
+            // we should get a message logged
+            $rules["B4valuesContain"]->execute($context);
+
+            $messages = $logger->getMessages();
+            $this->assertEquals($messages[0],
+                "Column value at TruthTable:B4 doesn't match expected value. Expecting: [0,1].");
+
+            $this->assertEquals(
+                $context['TruthTable']['B5'], "p");
+            $this->assertEquals(
+                $context['TruthTable']['B5values'], array('0', '1'));
+            // B5 is a letter, allowed values are 0|1, the next should fail
+            $this->assertTrue($rules["B5valuesContain"]->evaluate($context));
+            // we should get a message logged
+            $rules["B5valuesContain"]->execute($context);
+
+            $messages = $logger->getMessages();
+            $this->assertEquals($messages[1],
+                "Column value at TruthTable:B5 doesn't match expected value. Expecting: [0,1].");
+        }
     }
 
-    public function tablePath()
-    {
+    /**
+     * @dataProvider tablePath
+     */
+    public function testRulesEvaluator($path_excel_file, $repositories, $logger) {
+        $prv = new PayrollValidator($path_excel_file, $repositories, $logger);
+        $prv->rulesEvaluator();
+
+        $messages = $prv->getLogger()->getMessages();
+        // same two messages from above
+        $this->assertCount(2, $messages);
+
+    }
+
+    public function tablePath() {
         return array(
             array('./tests/Payroll/repository/truth-table.xlsx',
-                array('./tests/Payroll/Test/Rules/TruthTable.php'),
+                array(
+                    './tests/Payroll/Test/Rules/TruthTable.php',
+                    './tests/Payroll/Test/Rules/TruthTableGenerated.php'
+                ),
                 new DummyLogger()),
             array('./tests/Payroll/repository/truth-table.ods',
-                array('./tests/Payroll/Test/Rules/TruthTable.php'),
+                array(
+                    './tests/Payroll/Test/Rules/TruthTable.php',
+                    './tests/Payroll/Test/Rules/TruthTableGenerated.php'
+                ),
                 new DummyLogger())
         );
     }
 
 }
+
