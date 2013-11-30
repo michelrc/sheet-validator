@@ -186,12 +186,36 @@ class TruthTable implements RuleRepository
                             $rb['TruthTableGenerated']["B2"],
                             new \Ruler\Operator\Addition(
                                 $rb['TruthTableGenerated']["B2"],
-                                new \Ruler\Variable('1', 1)
+                                new \Ruler\Variable(null, 1)
                             )
                         ),
-                        new \Ruler\Variable('1', 1)
+                        new \Ruler\Variable(null, 1)
                     ),
-                    new \Ruler\Variable('1', 1)
+                    new \Ruler\Variable(null, 1)
+                )
+            )
+        );
+
+        $rules["complex2"] = $rb->create(
+            $rb->logicalNot(
+                new \Ruler\Operator\EqualTo(
+                    new \Ruler\Operator\Addition(
+                        $rb['TruthTableGenerated']['A2'],
+                        new \Ruler\Operator\Addition(
+                            $rb['TruthTableGenerated']['A3'], $rb['TruthTableGenerated']['A4']
+                        )
+                    )
+                    ,
+                    new \Ruler\Operator\Division(
+                        new \Ruler\Operator\Multiplication(
+                            $rb['TruthTableGenerated']['A2'],
+                            new \Ruler\Operator\Multiplication(
+                                $rb['TruthTableGenerated']['A3'], $rb['TruthTableGenerated']['A4']
+                            )
+                        )
+                        ,
+                        new \Ruler\Variable(null, 3)
+                    )
                 )
             )
         );
