@@ -106,7 +106,7 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
 
             // testing rules individually
             $rules = $r->getRules();
-            $this->assertCount(10, $rules);
+            $this->assertCount(11, $rules);
 
             $this->assertEquals($context['TruthTable']['A1'], "P");
             $this->assertFalse($rules["A1=P"]->evaluate($context));
@@ -147,6 +147,10 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
             $messages = $logger->getMessages();
             $this->assertEquals($messages[1],
                 "Column value at TruthTable:B5 doesn't match expected value. Expecting: [0,1].");
+
+            // now lets check a more complex rule
+            // if B2 = 0  assert  !( ( B2 + (B2 + 1) ) / 1 = 1 )
+            $this->assertFalse($rules["complex"]->evaluate($context));
         }
     }
 

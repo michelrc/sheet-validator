@@ -177,7 +177,25 @@ class TruthTable implements RuleRepository
     {
         $rules = array();
         $rb = $this->builder;
-        // TODO Generate user defined rules
+        // TODO Generate user defined rules, this one is for testing purposes
+        $rules['complex'] = $rb->create(
+            $rb->logicalNot(
+                new \Ruler\Operator\EqualTo(
+                    new \Ruler\Operator\Division(
+                        new \Ruler\Operator\Addition(
+                            $rb['TruthTableGenerated']["B2"],
+                            new \Ruler\Operator\Addition(
+                                $rb['TruthTableGenerated']["B2"],
+                                new \Ruler\Variable('1', 1)
+                            )
+                        ),
+                        new \Ruler\Variable('1', 1)
+                    ),
+                    new \Ruler\Variable('1', 1)
+                )
+            )
+        );
+
         return $rules;
     }
 
