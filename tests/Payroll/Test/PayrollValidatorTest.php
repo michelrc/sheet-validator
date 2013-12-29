@@ -121,6 +121,7 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
 
             // testing rules individually
             $rules = $r->getRules();
+
             $this->assertCount(12, $rules);
 
             $this->assertEquals($context['TruthTable']['A1'], "P");
@@ -169,6 +170,7 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
 
             // !(A2+A3+A4 == (A2*A3*A4) / 3)
             $this->assertTrue($rules["complex2"]->evaluate($context));
+
         }
     }
 
@@ -192,6 +194,7 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
                     './tests/Payroll/Test/Rules/TruthTable.php',
                     './tests/Payroll/Test/Rules/TruthTableGenerated.php'
                 ),
+
                 new DummyLogger()),
             array('./tests/Payroll/repository/truth-table.ods',
                 array(

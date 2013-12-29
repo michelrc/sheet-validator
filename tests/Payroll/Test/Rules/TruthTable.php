@@ -1,11 +1,27 @@
 <?php
 
 use Ruler\RuleBuilder;
+use Ruler\Proposition;
+use Ruler\Context;
 use Payroll\Rules\RuleRepository;
+
+
+/**
+ * Taken from Ruler test, allow state a false literal proposition
+ */
+if(! class_exists('FalseProposition') ) {
+
+    class FalseProposition implements Proposition
+    {
+        public function evaluate(Context $context)
+        {
+            return false;
+        }
+    }
+}
 
 /**
  * Class TruthTable
- *
  */
 class TruthTable implements RuleRepository
 {
@@ -65,6 +81,9 @@ class TruthTable implements RuleRepository
             // check expected values on each cell
             $this->context["A{$i}values"] = array('0', '1');
             $this->context["B{$i}values"] = array('0', '1');
+            $this->context["A{$i}types"] = false;
+            $this->context["B{$i}values"] = array('0', '1');
+            $this->context["B{$i}types"] = false;
         }
         return $this->context;
     }
@@ -116,7 +135,7 @@ class TruthTable implements RuleRepository
      * in model for each sheet.
      *
      * @return array Ruler\Rule
-     */
+      */
     public function getStructureValidationRules()
     {
         $rules = array();
@@ -223,13 +242,30 @@ class TruthTable implements RuleRepository
         return $rules;
     }
 
+        return $rules;
+
+    }
+
+    /**
+     * Return collection of user defined rules to validate the payroll.
+     *
+     * @return array \Ruler\Rule
+     */
+    public function getUserDefinedValidationRules()
+    {
+        $rules = array();
+        $rb = $this->builder;
+        // TODO Generate user defined rules
+        return $rules;
+    }
+
     /**
      * Return collection of rules to validate the payroll.
      *
      * The returned rules include those to validate structure as well
      * as the domain expert declared rules.
      *
-     * @return array Ruler\Rule
+     * @return array \Ruler\Rule
      */
     public function getRules()
     {
