@@ -10,8 +10,8 @@ namespace Payroll\Test;
 
 use \Payroll\PayrollValidator;
 use Payroll\Test\Log\DummyLogger;
+use Ruler\Context;
 use \Ruler\RuleBuilder;
-
 
 class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
 
@@ -19,28 +19,27 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
      * @dataProvider tablePath
      */
     public function testPayrollValidator(
-        $path_excel_file, $repositories, $logger) {
+    $path_excel_file, $repositories, $logger) {
 
         $rb = new PayrollValidator($path_excel_file, $repositories, $logger);
         $excel_file = $rb->getExcelFile();
 
         $sheet = $excel_file->getSheet(0);
 
-        for($i=2; $i<4;$i++){
+        for ($i = 2; $i < 4; $i++) {
             $this->assertEquals($sheet->getCellByColumnAndRow('A', $i)->getValue(), 0);
         }
 
-        for($i=4; $i<6;$i++){
+        for ($i = 4; $i < 6; $i++) {
             $this->assertEquals($sheet->getCellByColumnAndRow('A', $i)->getValue(), 1);
         }
-
     }
 
     /**
      * @dataProvider tablePath
      */
     public function testPayrollValidatorPluggableRules(
-        $path_excel_file, $repositories, $logger){
+    $path_excel_file, $repositories, $logger) {
 
         $prv = new PayrollValidator($path_excel_file, $repositories, $logger);
 
@@ -56,37 +55,53 @@ class PayrollValidatorTest extends \PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($interfaces);
 
         $this->assertTrue(
+                in_array('Payroll\Rules\RuleRepository', array_keys($interfaces)));
+
+        $r = New \ReflectionClass(get_class($repositories[1]));
+        $interfaces = $r->getInterfaces();
+        $this->assertNotEmpty($interfaces);
+
+        $this->assertTrue(
             in_array('Payroll\Rules\RuleRepository', array_keys($interfaces)));
     }
 
     /**
      * @dataProvider tablePath
      */
-     public function testGetContextVariables(
-         $path_excel_file, $repositories, $logger) {
+    public function testGetContextVariables(
+    $path_excel_file, $repositories, $logger) {
         $prv = new PayrollValidator($path_excel_file, $repositories, $logger);
-
         $sheet_names = $prv->getExcelFile()->getSheetNames();
         $context = $prv->getContext();
 
-        // really got the repositories?
         $this->assertNotEmpty($context);
-        //$this->fail(print_r($context, true));
-        foreach($sheet_names as $sheet_name) {
-           $this->assertArrayHasKey($sheet_name,$context);
+        $this->assertArrayHasKey($sheet_names[0], $context);
+
+        $this->assertTrue(is_array($context));
+        $this->assertTrue(is_array($context['TruthTable']));
+        $this->assertArrayHasKey('B1', $context['TruthTable']);
+        $this->assertArrayHasKey('B2values', $context['TruthTable']);
+
+        $this->assertContains(1, $context['TruthTable']['B2values']);
+        $this->assertNotContains(2, $context['TruthTable']['B2values']);
+
+        // after calling getContext on validator repositories should have set up
+        // the total count of row to process
+        foreach( $prv->getRepositories() as $r){
+            $this->assertEquals($r->getTotalCount(), 5);
+            $this->assertFalse($r->getTotalCount() == 4);
         }
-
-
     }
 
     /**
      * @dataProvider tablePath
      */
     public function testPayrollValidatorRulesExecution(
-        $path_excel_file, $repositories, $logger)
-    {
+    $path_excel_file, $repositories, $logger) {
 
         $prv = new PayrollValidator($path_excel_file, $repositories, $logger);
+
+        $context = new Context($prv->getContext());
 
         $repositories = $prv->getRepositories();
 

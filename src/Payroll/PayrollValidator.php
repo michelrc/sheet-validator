@@ -12,6 +12,10 @@
 namespace Payroll;
 
 use Payroll\Rules\RuleRepository;
+use Ruler\RuleBuilder;
+use \Ruler\RuleSet;
+use \Ruler\Context;
+use PHPExcel_Exception;
 
 /**
  * Payroll Validator
@@ -95,36 +99,74 @@ class PayrollValidator {
     /**
      * @param \Psr\Log\LoggerInterface $logger
      */
-    public function setLogger($logger)
-    {
+    public function setLogger($logger) {
         $this->logger = $logger;
     }
 
     /**
      * @return \Psr\Log\LoggerInterface
      */
-    public function getLogger()
-    {
+    public function getLogger() {
         return $this->logger;
     }
 
-    /**
-     * Return an array with context variables names used on the rules added
-     *
+
+     /**
+     * @throws PHPExcel_Exception
      * @return array
      */
     public function getContext() {
-        $all_sheets = $this->getExcelFile()->getAllSheets();
-        $sheet_names = $this->getExcelFile()->getSheetNames();
 
         $context = array();
+        foreach($this->repositories as $r){
+            $name = $r->getName();
 
-        for ($i = 0; $i < count($sheet_names); $i++) {
-            $var_sheet = $all_sheets[$i]->getCellCollection();
-            $context[$sheet_names[$i]] = $var_sheet;
+            $sheet = $this->getExcelFile()->getSheetByName($name);
+
+            // total count of row
+            $total = $sheet->getHighestRow();
+            $r->setTotalCount($total);
+
+            if($sheet == null) {
+                throw new PHPExcel_Exception(
+                    "Applying rules to non existent sheet {$name} in excel document");
+            }
+
+            $cells = $sheet->getCellCollection();
+            foreach($cells as $c) {
+                $cell = $sheet->getCell($c);
+                $context[$name][$c] = $cell->getFormattedValue();
+            }
+
+            // internal used variables on repository
+            foreach($r->getContext() as $n => $v) {
+                $context[$name][$n] = $v;
+            }
+
         }
 
         return $context;
+
+    }
+
+    public function rulesEvaluator() {
+        $rb = new RuleBuilder();
+        // this should be called before getting the rules from repositories
+        // it set up max count of rows from excel workbook
+        $context = new Context($this->getContext());
+
+        $rules_object_array = array();
+
+        foreach ($this->getRepositories() as $repository) {
+            $repository->setBuilder($rb);
+            $repository->setLogger($this->logger);
+            $rules_object_array = array_merge($rules_object_array, $repository->getRules());
+        }
+
+        $rules = new RuleSet($rules_object_array);
+
+        $rules->executeRules($context);
     }
 
 }
+
